@@ -1,0 +1,9 @@
+octoparse codes: 
+email business12345665@gmail.com
+username: utopia21
+password: Qwerty123 or qwerty123
+
+api request possible as of now: 
+fistextract
+secondextract
+nfile1
