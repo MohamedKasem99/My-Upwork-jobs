@@ -72,25 +72,47 @@ def find_workers(raw_message, message, first):
             mat[word_indx] = np.zeros((len(first.columns)))
     
     summary = np.array(mat).sum(axis=0)
-    match_worker = first.columns[summary!=0]
-    summary_wo_zeros = summary[np.argwhere(summary).reshape(1,-1)]
+    match_worker = first.columns[summary!=0].values
+    summary_wo_zeros = summary[np.argwhere(summary).reshape(-1,1)]
     
-    print(mat)
-    print(summary)
-    print(f"""He is looking for >>> {match_worker}""")
+    highest_match = ""
+    #print(mat)
+    #print(summary)
+    #print(f"""He is looking for >>> {match_worker}""")
 
-    if summary_wo_zeros.max() != summary_wo_zeros.min():
-        print(f"Highest match is: {first.columns[np.argmax(summary)]}")
-    return match_worker
+    if len(list(summary_wo_zeros)) != 0:
+        if summary_wo_zeros.max() != summary_wo_zeros.min():
+            highest_match = first.columns[np.argmax(summary)]
+    return match_worker, highest_match
 
-def step_1(message, bad_keywords):
+def step_1(raw_message, message, bad_keywords):
+    matched_words = []
+    hard_coded = ['class a ', 'class b ', 'class c ']
     one_words = bad_keywords[bad_keywords['name'].apply(lambda x: not len(x.split())>1)]["name"]
     two_words = bad_keywords[bad_keywords['name'].apply(lambda x: len(x.split())>1)]["name"]
     
-    matched_words = []
-    for word in pre_process(message):
+    for word in hard_coded: 
+        if word in raw_message.lower(): matched_words.append(word)
+    for word in pre_process(raw_message):
         if any([isMatch_1_word(word, word2, thresh=85) for word2 in one_words]): matched_words.append(word)
     for word in two_words:
-        if isMatch_many_words(word, message): matched_words.append(word)
+        if any([isMatch_many_words(word, two_word) for two_word in message]): matched_words.append(word)
     
     return matched_words
+
+
+def append_sapces(text):
+    if text.find("-"): 
+        (text[:text.find("-")] + " " + text[text.find("-")] + " " + text[text.find("-")+1:])
+    if text.find("/"):
+        (text[:text.find("/")] + " " + text[text.find("/")] + " " + text[text.find("/")+1:])
+    return text
+
+def find_matching_key_word(message, df):
+    results = []
+    for key_word in df[df.columns[0]]:
+        if any([isMatch_1_word(word,key_word) for word in message]):
+            results.append(key_word)
+        if any([isMatch_many_words(key_word, two_word) for two_word in get_two_word(message)]):
+            results.append(key_word)
+    return results

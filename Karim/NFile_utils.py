@@ -55,8 +55,8 @@ second_extract = client.export_non_exported_data(tasks["data"][2]["taskId"], 100
 
 #print("\nExported data:")
 Nfile_df = pd.DataFrame(Nfile1['data']['dataList']).drop_duplicates()
-first_extract_df = pd.DataFrame(first_extract['data']['dataList']).drop_duplicates()
-second_extract_df = pd.DataFrame(second_extract['data']['dataList']).drop_duplicates()
+first_extract_df = pd.DataFrame(first_extract['data']['dataList'])
+second_extract_df = pd.DataFrame(second_extract['data']['dataList'])
 
 #print(Nfile_df.drop_duplicates())
 #print(first_extract_df.drop_duplicates())

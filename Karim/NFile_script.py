@@ -18,7 +18,7 @@ sender_email = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values
 password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0]
 receivers = creds_file[creds_file.columns[2]].dropna(axis=0,how='all').values
 
-def send_mail(subject, link, from_, receivers):
+def send_mail(title, link, from_, receivers):
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         try:
@@ -33,7 +33,7 @@ def send_mail(subject, link, from_, receivers):
                 message['To'] = receiver_email
                 message['From'] = from_
                 message['Subject'] = "Iron glove and fletcher"
-                body = """This link is from Nfile1: {}""".format(link)
+                body = """Title: {}\nLink: {}""".format(title, link)
                 message.attach(MIMEText(body, 'plain'))
                 server.sendmail(sender_email, receiver_email, message.as_string())
 
