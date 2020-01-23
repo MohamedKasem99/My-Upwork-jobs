@@ -12,50 +12,85 @@ nltk.download('punkt')
 def pre_process_df_keywords(df):
     for column in df.columns:
         for indx, entry in enumerate(df[column].dropna(axis=0)):
-            if len(entry.split()) > 0 and entry[-1] != " ":
+            if len(entry.split()) > 1 and entry[-1] != " ":
                 df[column][indx] = entry + " "
-                
+def get_two_word(message):
+    combined_2_words = []
+    for word1, word2 in zip(message,list( message[1:] + list((message[0])))):
+        combined_2_words.append(word1 + ' ' + word2)
+    return combined_2_words
+
 def pre_process(message):
     stopWords = set(stopwords.words('english'))
     pronouns = ["we", "We","WE","I","me","Me","ME","THEY","they","They","Them","them","THEM","YOU","You","you"]
-    tabs = ["first", "parent second", ""]
+    result = []
     for word in message.split():
         if word not in stopWords and word not in pronouns:
-            yield word
-            #words.append(word)
-    #yield dict(zip(words,np.zeros(len(words),dtype=np.int)))
-    
-def pre_process2(message):
-    stopWords = set(stopwords.words('english'))
-    pronouns = ["we", "We","WE","I","me","Me","ME","THEY","they","They","Them","them","THEM","YOU","You","you"]
-    tabs = ["first", "parent second", ""]
-    for word in message.split():
-        if word not in stopWords and word not in pronouns:
-            yield dict(word,[np.zeros(12),0])
+            result.append(word)
+    return (result)
     
 def gen_len(iter):
     return sum([1 for _ in iter])
 
 
 def isMatch_1_word(word1,word2,thresh=80): return (fuzz.ratio(word1, word2) > thresh)
-def isMatch_many_words(word1,message,thresh=80): return (fuzz.partial_ratio(word1, message) > thresh)
+def isMatch_many_words(word1,message,thresh=90): return (fuzz.partial_ratio(word1, message) >= thresh)
 
 def column_summary(word1, df):
     summary = np.zeros(len(df.columns))
     for col_indx, worker in enumerate(df.columns):
-        c = 0
         for word2 in df[worker].dropna(axis=0):
             if isMatch_1_word(word1,word2):
                 summary[col_indx]+=1
     return summary
 
-def which_worker(message, first, bad_keywords):
-    mat = []
-    for word in pre_process(message):
-        for bad_keyword in bad_keywords[bad_keywords.columns[0]]:
 
-            if isMatch_1_word(word, bad_keyword):
-                print(word, bad_keyword)
-                print("BREAKING")
-        mat.append(column_summary(word,first))
-    return np.array(mat)
+def summarize_one_words(message, first):
+    mat = np.zeros((len(message),len(first.columns)))
+    for word_indx, word in enumerate(message):    
+        mat[word_indx]=(column_summary(word,first)) 
+    return mat
+
+def summarize_two_words(message, df):
+    mat = np.zeros((len(message),len(df.columns)))
+    for col_indx, worker in enumerate(df.columns):
+        two_words = df[df[worker].apply(lambda x: len(str(x).split())>1)][worker]
+        for word in two_words.dropna(axis=0):
+            for word_indx, two_word in enumerate(get_two_word(message)):
+                if isMatch_many_words(word, two_word):
+                    mat[word_indx][col_indx]+=1
+    return mat
+
+def find_workers(raw_message, message, first):
+    mat = summarize_one_words(message, first) + summarize_two_words(message, first)
+    #print(mat,"\n\n")
+    for word_indx, row_word in enumerate(mat[:]):
+        if row_word.sum() == 0:
+            mat[word_indx] = np.zeros((len(first.columns))); continue
+            
+        if len(first.columns[row_word != 0]) > 1:
+            mat[word_indx] = np.zeros((len(first.columns)))
+    
+    summary = np.array(mat).sum(axis=0)
+    match_worker = first.columns[summary!=0]
+    summary_wo_zeros = summary[np.argwhere(summary).reshape(1,-1)]
+    
+    print(mat)
+    print(summary)
+    print(f"""He is looking for >>> {match_worker}""")
+
+    if summary_wo_zeros.max() != summary_wo_zeros.min():
+        print(f"Highest match is: {first.columns[np.argmax(summary)]}")
+    return match_worker
+
+def step_1(message, bad_keywords):
+    one_words = bad_keywords[bad_keywords['name'].apply(lambda x: not len(x.split())>1)]["name"]
+    two_words = bad_keywords[bad_keywords['name'].apply(lambda x: len(x.split())>1)]["name"]
+    
+    matched_words = []
+    for word in pre_process(message):
+        if any([isMatch_1_word(word, word2, thresh=85) for word2 in one_words]): matched_words.append(word)
+    for word in two_words:
+        if isMatch_many_words(word, message): matched_words.append(word)
+    
+    return matched_words
