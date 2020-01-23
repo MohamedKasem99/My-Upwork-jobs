@@ -4,3 +4,4 @@ __pycache__/
 .~lock.strings stems.xlsx#
 .~lock.12 steps and a final step
 CraigListEmailsJob/
+.vscode/

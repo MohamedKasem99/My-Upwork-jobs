@@ -1,67 +1,41 @@
-from octoparse.client import Client
-import requests 
-import sys
-import os
-import getpass
+import smtplib, ssl
+import NFile_utils
+import time 
+from getpass import getpass
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import pandas as pd
 
-def log_in(base_url, username, password): 	
-        """login and get a access token
-        
-        Arguments:
-                base_url {string} -- authrization base url(currently same with api)
-                username {[type]} -- your username
-                password {[type]} -- your password
-        
-        Returns:
-                json -- token entity include expiration and refresh token info like:
-                        {
-                                "access_token": "ABCD1234",      # Access permission
-                                "token_type": "bearer",		 # Token type
-                                "expires_in": 86399,		 # Access Token Expiration time (in seconds)(It is recommended to use the same token repeatedly within this time frame.) 
-                                "refresh_token": "refresh_token" # To refresh Access Token
-                        }
-        """
-        content = 'username={0}&password={1}&grant_type=password'.format(username, password)
-        token_entity = requests.post(base_url + 'token', data = content).json()
+port = 465  # For SSL
+smtp_server = "smtp.gmail.com"
 
-        if 'access_token' in token_entity:
-                #print('Obtained token successfully!')
-                #print(token_entity)
-                return token_entity
+creds_file = pd.read_csv("email_creds_for_NFiles.csv")
+
+#uncomment to have password hidden when entered.
+#password = getpass("Type your password and press enter: ")
+
+sender_email = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values[0]
+password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0]
+receivers = creds_file[creds_file.columns[2]].dropna(axis=0,how='all').values
+
+def send_mail(subject, link, from_, receivers):
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        try:
+            server.login(sender_email, password)
+        except smtplib.SMTPAuthenticationError:
+            print("""Couldn't login to your email. Here are possible fixes:
+            1- Make sure you entered a correct email and password.
+            2- Follow instructions to allow less secure apps on your account.""")
         else:
-                print(token_entity['error_description'])
-                os._exit(-2)
+            for receiver_email in receivers:
+                message = MIMEMultipart()
+                message['To'] = receiver_email
+                message['From'] = from_
+                message['Subject'] = "Iron glove and fletcher"
+                body = """This link is from Nfile1: {}""".format(link)
+                message.attach(MIMEText(body, 'plain'))
+                server.sendmail(sender_email, receiver_email, message.as_string())
 
-user_name = "utopia21"
-password = "Qwerty123"
-base_url = 'http://advancedapi.octoparse.com/'
-token_entity = log_in(base_url, user_name, password)
-
-
-
-
-client = Client(advanced_api=True)
-r = client.refresh_token(token_entity['refresh_token'])
-client.set_access_token(token_entity['access_token'])
-r_tg = client.list_task_groups()['data']
-tasks = client.list_group_tasks(r_tg[0]['taskGroupId'])
-started = client.start_task(tasks["data"][0]["taskId"])
-
-print(started)
-Nfile1 = client.export_non_exported_data(tasks["data"][0]["taskId"], 1000)
-first_extract = client.export_non_exported_data(tasks["data"][1]["taskId"], 1000)
-second_extract = client.export_non_exported_data(tasks["data"][2]["taskId"], 1000)
-
-#print("\nExported data:")
-Nfile_df = pd.DataFrame(Nfile1['data']['dataList']).drop_duplicates()
-first_extract_df = pd.DataFrame(first_extract['data']['dataList']).drop_duplicates()
-second_extract_df = pd.DataFrame(second_extract['data']['dataList']).drop_duplicates()
-
-#print(Nfile_df.drop_duplicates())
-#print(first_extract_df.drop_duplicates())
-#print(second_extract_df.drop_duplicates())
-
-
-
-
+for row in NFile_utils.Nfile_df.itertuples():
+    send_mail(row.field1_Text_Text, row.field1_Link_Link, sender_email, receivers)
