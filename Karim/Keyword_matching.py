@@ -45,9 +45,22 @@ raw_posts = [title + "\n\n" + body for title, body in zip(second_extract["field1
 extracted_pay = extract_pay_info(second_extract,extractor)
 
 raw_job_post = raw_posts[-1]
+raw_job_post = """
+My name is Jack, the designer of Bellorita handbags (bellorita.com). We are working on a 90-second video ad on facebook. We need a video editor to help us edit the video with text, image, and footage overlay to go with the script and spokewoman.
+
+Right now the script (225 words) is ready, but the spokewoman video is not yet, and we need your suggestion on how we need her to performe to smooth your video editing.
+
+
+Please note that this is an easy project, and we want the lowest rate possible. Thank you.
+
+I will pay through cash app and I need to sign an NDA form
+
+Sincerely
+Jack
+"""
 indx = -1
 generated_email = ""
-print(raw_job_post,"\n\n\n>>>>>\n\n",extracted_pay.iloc[indx]["Decesion"])
+#print(raw_job_post,"\n\n\n>>>>>\n\n",extracted_pay.iloc[indx]["Decesion"])
 
 raw_job_post = raw_job_post.lower()
 
@@ -66,10 +79,9 @@ highest_match = utils.find_workers(raw_job_post, job_post, first)[1]
 parent_second_result = utils.find_workers(raw_job_post, job_post, parent_second)[0]
 tutoring_result = utils.find_workers(raw_job_post, job_post, tutoring)[0]
 pay_amount = extracted_pay.iloc[indx]["Decesion"]
+pay_amount = 100
 pay_method = utils.find_matching_key_word(job_post,payments)
 contract_type = utils.find_matching_key_word(job_post,contract)
-
-
 
 
 formatted_first = ""
@@ -134,7 +146,7 @@ if is_sample:
 
 if is_payment_method:
     formatted_pay_method = f"""
-    I am fine to accept payments with {is_payment_method[0]} as you have mentioned it within your posting.
+    I am fine to accept payments with {pay_method[0]} as you have mentioned it within your posting.
     """
 else:
     formatted_pay_method = f"""I accept payments through Paypal as it is the only platform that provides a buyer’s protection for you. 
@@ -144,7 +156,6 @@ else:
 if is_contract_type:
     formatted_contract_type = f"""I am also willing, per your request to provide you/sign a {contract_type[0]} at your request.
     """
-
 
 generated_email = f"""
 Greetings, 

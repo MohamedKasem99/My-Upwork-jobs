@@ -33,7 +33,7 @@ def gen_len(iter):
     return sum([1 for _ in iter])
 
 
-def isMatch_1_word(word1,word2,thresh=80): return (fuzz.ratio(word1, word2) > thresh)
+def isMatch_1_word(word1,word2,thresh=80): return (fuzz.QRatio(word1, word2) > thresh)
 def isMatch_many_words(word1,message,thresh=90): return (fuzz.partial_ratio(word1, message) >= thresh)
 
 def column_summary(word1, df):
