@@ -5,3 +5,4 @@ __pycache__/
 .~lock.12 steps and a final step
 CraigListEmailsJob/
 .vscode/
+.*
