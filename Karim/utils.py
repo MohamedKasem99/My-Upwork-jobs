@@ -2,12 +2,14 @@ import csv
 import pandas as pd
 from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
+import re
 import numpy as np
 import nltk
 import itertools
 from nltk.corpus import stopwords
 nltk.download("stopwords")
 nltk.download('punkt')
+
 
 def pre_process_df_keywords(df):
     for column in df.columns:
@@ -61,7 +63,7 @@ def summarize_two_words(message, df):
                     mat[word_indx][col_indx]+=1
     return mat
 
-def find_workers(raw_message, message, first):
+def find_workers(raw_message, message, first, at_least_another = pd.DataFrame([0])):
     mat = summarize_one_words(message, first) + summarize_two_words(message, first)
     #print(mat,"\n\n")
     for word_indx, row_word in enumerate(mat[:]):
@@ -69,6 +71,9 @@ def find_workers(raw_message, message, first):
             mat[word_indx] = np.zeros((len(first.columns))); continue
             
         if len(first.columns[row_word != 0]) > 1:
+            mat[word_indx] = np.zeros((len(first.columns)))
+        
+        if any([isMatch_1_word( message[word_indx], key_word ) for key_word in at_least_another[at_least_another.columns[0]] ]):
             mat[word_indx] = np.zeros((len(first.columns)))
     
     summary = np.array(mat).sum(axis=0)
@@ -116,3 +121,20 @@ def find_matching_key_word(message, df):
         if any([isMatch_many_words(key_word, two_word) for two_word in get_two_word(message)]):
             results.append(key_word)
     return results
+
+def extract_pay_info(second_extract, extractor):
+    extracted_pay = pd.DataFrame({"field": second_extract['field3'].values, 
+              "Res": list(map(extractor.extract_entities_dict,(map(append_sapces,second_extract['field3'].values)))),
+              "Decesion": [" "] * len(second_extract['field3'].values)
+             })
+    for indx, item in enumerate(extracted_pay["Res"]):
+        if len(item) != '' and ("money" in item.keys() or 'cardinal' in item.keys()):
+            temp = re.findall(r'\d+', str(item.values()).replace(',',""))
+            try:
+                extracted_pay.iloc[indx]['Decesion'] = min(list(map(int, temp)))
+            except:
+                extracted_pay.iloc[indx]['Decesion'] = -1
+        else:
+            extracted_pay.iloc[indx]['Decesion'] = -1
+
+    return extracted_pay
