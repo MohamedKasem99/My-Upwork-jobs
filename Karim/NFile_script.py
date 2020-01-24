@@ -1,18 +1,14 @@
 import smtplib, ssl
-import NFile_utils
-import time 
-from getpass import getpass
+import run_api
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import pandas as pd
+
+pd = run_api.pd
 
 port = 465  # For SSL
 smtp_server = "smtp.gmail.com"
 
 creds_file = pd.read_csv("email_creds_for_NFiles.csv")
-
-#uncomment to have password hidden when entered.
-#password = getpass("Type your password and press enter: ")
 
 sender_email = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values[0]
 password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0]
@@ -37,5 +33,11 @@ def send_mail(title, link, from_, receivers):
                 message.attach(MIMEText(body, 'plain'))
                 server.sendmail(sender_email, receiver_email, message.as_string())
 
-for row in NFile_utils.Nfile_df.itertuples():
-    send_mail(row.field1_Text_Text, row.field1_Link_Link, sender_email, receivers)
+for Nfile_index, Nfile_df in enumerate(run_api.Nfiles_df_list):
+    try:
+        for row in Nfile_df.itertuples():
+            send_mail(row.field1_Text_Text, row.field1_Link_Link, sender_email, receivers)
+    except:
+        print(f"couldn't send Nfile{Nfile_index+1}")
+        raise 
+    
