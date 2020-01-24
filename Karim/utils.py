@@ -136,5 +136,19 @@ def extract_pay_info(second_extract, extractor):
                 extracted_pay.iloc[indx]['Decesion'] = -1
         else:
             extracted_pay.iloc[indx]['Decesion'] = -1
-
+    hard_coded_words = ["hour", "hr", "hourly", "day","daily","month","year"]
+    hard_coded_delims= ["per", " a ", " an ", "/", "for"]
+    amount = []
+    
+    for msg, pay_amount in zip(extracted_pay["field"], extracted_pay["Decesion"]):
+        found = "NA"
+        for key_word in hard_coded_words:
+            if key_word in msg.lower():
+                found = key_word 
+        if found == "NA":
+            for delim in hard_coded_delims:
+                if msg.lower().find(delim) != -1:
+                    found = (msg[msg.lower().find(delim)+ len(delim):])
+        amount.append(found)
+    extracted_pay = extracted_pay.reset_index().merge(pd.DataFrame({"amount":amount}).reset_index(), on="index",how="right").drop(["index"],axis=1)
     return extracted_pay

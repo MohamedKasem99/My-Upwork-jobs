@@ -1,12 +1,14 @@
 import utils
+import time
 import re
 from ner import NER
-import run_api
+
 
 
 extractor = NER()
 pd = utils.pd
 
+import run_api
 xls = pd.ExcelFile('strings stems.xlsx')
 first = pd.read_excel(xls, 'first').dropna(axis=1, how='all').dropna(axis=0, how='all')
 parent_second = pd.read_excel(xls, 'parent second').dropna(axis=1, how='all').dropna(axis=0, how='all')
@@ -31,7 +33,7 @@ second_extract_pay_appended.rename(columns={"field1": "title", "field2":"body", 
 first_extract.rename(inplace=True, columns={"field1_Text_Text": "title", "field1_Link_Link": "link"})
 all_info = second_extract_pay_appended.merge(first_extract, on= "title", how="left" )
 
-for title, body, pay_amount in  zip(all_info["title"], all_info["body"], all_info["pay_amount"]):
+for title, body, pay_amount, rate in  zip(all_info["title"].iloc[0:5], all_info["body"].iloc[0:5], all_info["pay_amount"].iloc[0:5], all_info["amount"]):
     raw_job_post = title + "\n\n" + body
     generated_email = ""
     

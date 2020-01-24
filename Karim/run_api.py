@@ -92,7 +92,7 @@ def export_all_tasks_dfs(ID_dict, return_dict = False):
     second_extract_df = pd.DataFrame(second_extract['data']['dataList'])
     
     return {
-        "Nfiles_df": Nfiles_df,
+        "Nfiles_df": Nfiles_df_list,
         "first_extract": first_extract_df,
         "second_extract": second_extract_df
     } if return_dict else (Nfiles_df_list, first_extract_df, second_extract_df)
