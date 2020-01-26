@@ -107,6 +107,8 @@ def step_1(raw_message, message, bad_keywords):
 
 
 def append_sapces(text):
+    if len(text) == 0:
+        return "no pay"
     if text.find("-"): 
         (text[:text.find("-")] + " " + text[text.find("-")] + " " + text[text.find("-")+1:])
     if text.find("/"):
@@ -152,3 +154,11 @@ def extract_pay_info(second_extract, extractor):
         amount.append(found)
     extracted_pay = extracted_pay.reset_index().merge(pd.DataFrame({"amount":amount}).reset_index(), on="index",how="right").drop(["index"],axis=1)
     return extracted_pay
+
+
+def compare_against_sent(df1, df2, columns_to_check):
+    """
+    columns_to_check: is an array of names of columns to check with.
+    """
+    index  = df1[(df1[columns_to_check].isin(df2[columns_to_check]) == True)].dropna(how='all').index
+    return df1.drop(index)

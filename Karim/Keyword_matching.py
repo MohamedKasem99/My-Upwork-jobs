@@ -1,8 +1,9 @@
 import utils
 import time
 import re
+import NFile_script
 from ner import NER
-
+from email_sender import send_mail
 
 
 extractor = NER()
@@ -22,125 +23,122 @@ contract = pd.read_excel(xls, 'contract').dropna(axis=1, how='all').dropna(axis=
 
 first_extract =  run_api.first_extract_df
 second_extract = run_api.second_extract_df
+third_extract = run_api.third_extract_df
 
 utils.pre_process_df_keywords(parent_second)
 utils.pre_process_df_keywords(first)
 utils.pre_process_df_keywords(bad_keywords)
 
 extracted_pay = utils.extract_pay_info(second_extract,extractor)
+second_extract = run_api.cleanup_df(second_extract.merge(third_extract, on= "field1", how="left" ), "field1")
 second_extract_pay_appended = second_extract.reset_index().merge(extracted_pay.reset_index(), on="index",how="right").drop(["index","field","Res"],axis=1)
-second_extract_pay_appended.rename(columns={"field1": "title", "field2":"body", "field3": "compensation", "Decesion":"pay_amount"}, inplace=True)
+second_extract_pay_appended.rename(columns={"field1": "title", "field2":"body", "field3": "compensation","email": "email", "Decesion":"pay_amount"}, inplace=True)
 first_extract.rename(inplace=True, columns={"field1_Text_Text": "title", "field1_Link_Link": "link"})
-all_info = second_extract_pay_appended.merge(first_extract, on= "title", how="left" )
+all_info = run_api.cleanup_df(second_extract_pay_appended.merge(first_extract, on= "title", how="left" ), "title")
 
-for title, body, pay_amount, rate in  zip(all_info["title"].iloc[0:5], all_info["body"].iloc[0:5], all_info["pay_amount"].iloc[0:5], all_info["amount"]):
-    raw_job_post = title + "\n\n" + body
-    generated_email = ""
-    
-    raw_job_post = raw_job_post.replace("QR Code Link to This Post", "").lower()
+all_info = utils.compare_against_sent(pd.read_csv("sent.csv"), all_info, ["title", "body", "compensation"])
 
-    job_post = utils.pre_process(raw_job_post)
-    
-    if len(raw_job_post) < 5 and len(raw_job_post.split()) <2:
-        print(f"Breaking!! because is too short\n\n")
-        continue
+test_array = range(5)
+if len(all_info) != 0:
 
+    for title, body, pay_amount, rate, cl_email in  zip(all_info["title"].iloc[test_array], all_info["body"].iloc[test_array], 
+                                                        all_info["pay_amount"].iloc[test_array], all_info["amount"].iloc[test_array], all_info["email"].iloc[test_array]):
+        
+        raw_job_post = title + "\n\n" + body
+        generated_email = ""
+        
+        raw_job_post = raw_job_post.replace("QR Code Link to This Post", "").lower()
 
-    if any(utils.step_1(raw_job_post, utils.get_two_word(job_post), bad_keywords)):
-        print(f"Breaking!! because {utils.step_1(raw_job_post, utils.get_two_word(job_post), bad_keywords)} detected\n\n") 
-        continue
-
-    first_result = utils.find_workers(raw_job_post, job_post, first, at_least_another)[0]
-    highest_match = utils.find_workers(raw_job_post, job_post, first, at_least_another)[1]
-    parent_second_result = utils.find_workers(raw_job_post, job_post, parent_second)[0]
-    tutoring_result = utils.find_workers(raw_job_post, job_post, tutoring)[0]
-
-    pay_method = utils.find_matching_key_word(job_post,payments)
-    contract_type = utils.find_matching_key_word(job_post,contract)
+        job_post = utils.pre_process(raw_job_post)
+        
+        if len(raw_job_post) < 5 and len(raw_job_post.split()) <2:
+            print(f"Breaking!! because is too short\n\n")
+            continue
 
 
-    formatted_first = ""
-    formatted_second_parent = ""
-    formatted_pay = ""
-    formatted_tutoring = ""
-    formatted_pay_method = ""
-    formatted_contract_type = ""
-    formatted_sample = ""
+        if any(utils.step_1(raw_job_post, utils.get_two_word(job_post), bad_keywords)):
+            print(f"Breaking!! because {utils.step_1(raw_job_post, utils.get_two_word(job_post), bad_keywords)} detected\n\n") 
+            continue
 
-    is_sample = False
-    is_tutor = any(tutoring_result)
-    is_payment_method = any(pay_method)
-    is_contract_type = any(contract_type)
+        first_result = utils.find_workers(raw_job_post, job_post, first, at_least_another)[0]
+        highest_match = utils.find_workers(raw_job_post, job_post, first, at_least_another)[1]
+        parent_second_result = utils.find_workers(raw_job_post, job_post, parent_second)[0]
+        tutoring_result = utils.find_workers(raw_job_post, job_post, tutoring)[0]
 
-    if any(first_result):
+        pay_method = utils.find_matching_key_word(job_post,payments)
+        contract_type = utils.find_matching_key_word(job_post,contract)
 
-        if "someone" not in first_result:
-            if len(first_result) == 1: formatted_first = first_result[0]
-            elif len(first_result) == 2: formatted_first = f"{first_result[0]} and {first_result[1]}"
-            elif len(first_result) == 3: formatted_first = f"{first_result[0]}, {first_result[1]} and {first_result[2]}"
+
+        formatted_first = ""
+        formatted_second_parent = ""
+        formatted_pay = ""
+        formatted_tutoring = ""
+        formatted_pay_method = ""
+        formatted_contract_type = ""
+        formatted_sample = ""
+
+        is_sample = False
+        is_tutor = any(tutoring_result)
+        is_payment_method = any(pay_method)
+        is_contract_type = any(contract_type)
+
+        if any(first_result):
+
+            if "someone" not in first_result:
+                if len(first_result) == 1: formatted_first = first_result[0]
+                elif len(first_result) == 2: formatted_first = f"{first_result[0]} and {first_result[1]}"
+                elif len(first_result) == 3: formatted_first = f"{first_result[0]}, {first_result[1]} and {first_result[2]}"
+                else: formatted_first = "someone"
             else: formatted_first = "someone"
-        else: formatted_first = "someone"
 
 
-        if any(parent_second_result):
-            if len(parent_second_result) == 1: formatted_second_parent = parent_second_result[0]
-            elif len(parent_second_result) == 2: formatted_second_parent = f"{parent_second_result[0]} and {parent_second_result[1]}"
-            elif len(parent_second_result) == 3: formatted_second_parent = f"{parent_second_result[0]}, {parent_second_result[1]} and {parent_second_result[2]}"
-            else: formatted_second_parent = "many things"
-            is_sample = any(['x' in parent_second[i].values for i in parent_second_result])
+            if any(parent_second_result):
+                if len(parent_second_result) == 1: formatted_second_parent = parent_second_result[0]
+                elif len(parent_second_result) == 2: formatted_second_parent = f"{parent_second_result[0]} and {parent_second_result[1]}"
+                elif len(parent_second_result) == 3: formatted_second_parent = f"{parent_second_result[0]}, {parent_second_result[1]} and {parent_second_result[2]}"
+                else: formatted_second_parent = "many things"
+                is_sample = any(['karim' in parent_second[i].values for i in parent_second_result])
 
 
-    else:
-        print(f"Breaking because no first parent found")
-        continue
+        else:
+            print(f"Breaking because no first parent found")
+            continue
 
 
 
-    formatted_second_parent_final =f"well versed in {formatted_second_parent} and I can help you with that!" if formatted_second_parent != "" else ""
-    cond_1 = f"I see that you are looking for {formatted_first} {formatted_second_parent_final}"
+        formatted_second_parent_final =f"well versed in {formatted_second_parent} and I can help you with that!" if formatted_second_parent != "" else ""
+        cond_1 = f"I see that you are looking for {formatted_first} {formatted_second_parent_final}"
 
-    if pay_amount > 0:
-        formatted_pay = f""" Hence, I am willing to offer you this service for {pay_amount*0.8} instead of {pay_amount}"""
-    else:
-        formatted_pay = """In this instance and rather than providing you with a quote as I assume you are on a budget, 
-        I would prefer to ask you how much are you expecting to pay for this service? if it is reasonable, 
-        I would gladly offer you my services. """
+        if pay_amount > 0:
+            formatted_pay = f""" Hence, I am willing to offer you this service for {pay_amount*0.8} instead of {pay_amount}"""
+        else:
+            formatted_pay = """In this instance and rather than providing you with a quote as I assume you are on a budget, I would prefer to ask you how much are you expecting to pay for this service? if it is reasonable, I would gladly offer you my services. """
 
-    if is_tutor:
-        formatted_tutoring = """
-        As I understood, you are seeking someone to teach you how to do things instead of providing you with the services. 
-        What I generally do for my clients would be that I would ask you to provide me details regarding a specific project 
-        you have in mind, and I would self-record myself doing it. This will enable you to skip the learning of basics and 
-        ancillary things and learn exactly what you want. You will have the video showing every movements and actions being 
-        made from scratch to the result. I will also provide you, if needed, the resulting work."""
+        if is_tutor:
+            formatted_tutoring = """As I understood, you are seeking someone to teach you how to do things instead of providing you with the services. What I generally do for my clients would be that I would ask you to provide me details regarding a specific project you have in mind, and I would self-record myself doing it. This will enable you to skip the learning of basics and ancillary things and learn exactly what you want. You will have the video showing every movements and actions being made from scratch to the result. I will also provide you, if needed, the resulting work."""
 
-    if is_sample:
-        formatted_sample = """
-        Feel free to have a look at my samples:
-        """
+        if is_sample:
+            formatted_sample = """Feel free to have a look at my samples:
+            """
 
-    if is_payment_method:
-        formatted_pay_method = f"""
-        I am fine to accept payments with {pay_method[0]} as you have mentioned it within your posting.
-        """
-    else:
-        formatted_pay_method = f"""I accept payments through Paypal as it is the only platform that provides a buyer’s protection for you. 
-        I could send you an invoice for the service provided if needed. However, if you have other preferences, feel free to let me know.
-        """
+        if is_payment_method:
+            formatted_pay_method = f"""I am fine to accept payments with {pay_method[0]} as you have mentioned it within your posting.
+            """
+        else:
+            formatted_pay_method = f"""I accept payments through Paypal as it is the only platform that provides a buyer’s protection for you. 
+    I could send you an invoice for the service provided if needed. However, if you have other preferences, feel free to let me know.
+            """
 
-    if is_contract_type:
-        formatted_contract_type = f"""I am also willing, per your request to provide you/sign a {contract_type[0]} at your request.
-        """
+        if is_contract_type:
+            formatted_contract_type = f"""I am also willing, per your request to provide you/sign a {contract_type[0]} at your request.
+            """
 
-    generated_email = f"""
-    Greetings, 
-
+        generated_email = f"""
+    {cl_email}
+    Greetings,
     {cond_1}
 
-
-    My name is Karim and I am looking forward to fostering a long-term relationship with you or become your go-to service provider 
-    for any related future inquiries. 
-
+    My name is Karim and I am looking forward to fostering a long-term relationship with you or become your go-to service provider for any related future inquiries.
     {formatted_pay}
     {formatted_tutoring}
     {formatted_sample}
@@ -151,9 +149,12 @@ for title, body, pay_amount, rate in  zip(all_info["title"].iloc[0:5], all_info[
     Sincerely, 
     Karim
     karimafilal@hotmail.com
-    (408) 393-4260
+    (408) 393-4260 """
 
-    """
+        #send_mail(subject, generated_email, "firstenaction@gmail.com", "CastirlaCorte56", "karimafilal@hotmail.com")
+        print(generated_email)
+else:
+    print("NO NEW INFORMATION WAS EXTRACTED")
 
-    print(generated_email)
-
+all_info = run_api.append_non_exported("sent.csv", all_info).dropna().drop_duplicates()
+all_info.to_csv("sent.csv", index=False)
