@@ -71,19 +71,19 @@ def find_workers(raw_message, message, first, at_least_another = pd.DataFrame([0
             mat[word_indx] = np.zeros((len(first.columns))); continue
             
         if len(first.columns[row_word != 0]) > 1:
-            mat[word_indx] = np.zeros((len(first.columns)))
+            L = row_word
+            L[L == 0] = L[L!=0].min()
+            L[L == L.min()] = 0
+            mat[word_indx] = L
         
-        if any([isMatch_1_word( message[word_indx], key_word ) for key_word in at_least_another[at_least_another.columns[0]] ]):
-            mat[word_indx] = np.zeros((len(first.columns)))
+#         if any([isMatch_1_word( message[word_indx], key_word ) for key_word in at_least_another[at_least_another.columns[0]] ]):
+#             mat[word_indx] = np.zeros((len(first.columns)))
     
     summary = np.array(mat).sum(axis=0)
     match_worker = first.columns[summary!=0].values
     summary_wo_zeros = summary[np.argwhere(summary).reshape(-1,1)]
     
     highest_match = ""
-    #print(mat)
-    #print(summary)
-    #print(f"""He is looking for >>> {match_worker}""")
 
     if len(list(summary_wo_zeros)) != 0:
         if summary_wo_zeros.max() != summary_wo_zeros.min():

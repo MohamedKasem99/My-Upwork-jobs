@@ -49,14 +49,7 @@ if len(all_info) != 0:
     for title, body, pay_amount, rate, cl_email in  zip(all_info["title"].iloc[test_array], all_info["body"].iloc[test_array], 
                                                         all_info["pay_amount"].iloc[test_array], all_info["amount"].iloc[test_array], all_info["email"].iloc[test_array]):
         
-        raw_job_post = "I need a graphic design" + "\n\n" + """QR Code Link to This Post
-I'm looking for a graphic designer who can alter some of my photos and add text
-on them to look like a magazine cover or an add.
-Someone who can write in different languages (Russian preferred) would be great.
-Please send me your work to look at.
-I will pay $15- $40 per picture, depends on how much text. I need about 6 pictures.
-
-"""     
+        raw_job_post = title + "\n\n" + body
         generated_email = ""
         
         raw_job_post = raw_job_post.replace("QR Code Link to This Post", "").lower()
