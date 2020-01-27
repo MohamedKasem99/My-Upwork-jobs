@@ -63,8 +63,7 @@ def get_task_IDs(client):
     "others": others}
 
 
-def clear_all_data(client, NFile_also=True):
-    ID_dict = get_task_IDs(client)
+def clear_all_data(ID_dict, NFile_also=True):
     for ID in ID_dict["extracts_IDs"]:
         print(client.clear_data( ID ))
     if NFile_also:
@@ -78,7 +77,7 @@ if __name__ == "__main__":
     user_name = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values[0]
     password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0]
     base_url = 'http://advancedapi.octoparse.com/'
-    token_entity = log_in(base_url, user_name, password)
 
+    token_entity = log_in(base_url, user_name, password)
     ID_dict = get_task_IDs(client)
-    clear_all_data(client, ID_dict)
+    clear_all_data(ID_dict)

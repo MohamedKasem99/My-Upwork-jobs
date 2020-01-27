@@ -39,9 +39,7 @@ second_extract_pay_appended = second_extract.reset_index().merge(extracted_pay.r
 all_info = second_extract_pay_appended.merge(third_extract, on= "field1", how="left").dropna().drop_duplicates(subset = "email")
 all_info.rename(columns={"field1": "title", "field2":"body", "field3": "compensation","email": "email", "Decesion":"pay_amount"}, inplace=True)
 
-all_info.to_csv("sent.csv", index= False)
-
-#all_info = utils.compare_against_sent(pd.read_csv("sent.csv"), all_info, ["title", "body", "compensation"])
+all_info = utils.compare_against_sent( all_info, pd.read_csv("sent.csv"), ["title", "body", "compensation"])
 
 test_array = range(1)
 if len(all_info) != 0:
@@ -161,5 +159,5 @@ if len(all_info) != 0:
 else:
     print("NO NEW INFORMATION WAS EXTRACTED")
 
-#all_info = run_api.append_non_exported("sent.csv", all_info).dropna().drop_duplicates()
-#all_info.to_csv("sent.csv", index=False)
+all_info = run_api.append_non_exported("sent.csv", all_info).dropna().drop_duplicates()
+all_info.to_csv("sent.csv", index=False)

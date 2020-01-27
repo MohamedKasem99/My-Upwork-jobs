@@ -119,29 +119,31 @@ def export_all_tasks_dfs(ID_dict, return_dict = False):
         Nfiles_df_list = [pd.DataFrame(Nfile['data']['dataList']).drop_duplicates() for Nfile in Nfiles_non_exported]
     except:
         print("NFiles Not exported, Could be empty or a problem with octoparse. Considered empty for now")     
-        Nfiles_df_list = [pd.DataFrame([])]
+        Nfiles_df_list = [pd.DataFrame([{
+            "field1_Text_Text":[],
+            "field1_Link_Link":[]
+        }])]
 
 
     try:
         first_extract_df = pd.DataFrame(first_extract_non_exported['data']['dataList'])
     except:
         print("firstextract Not exported, Could be empty or a problem with octoparse. Considered empty for now")  
-        first_extract_df = pd.DataFrame([])
+        first_extract_df = pd.DataFrame(columns= ["field1_Text_Text","field1_Link_Link"])
     
 
     try:
         second_extract_df = pd.DataFrame(second_extract_non_exported['data']['dataList'])
     except:
         print("secondextract Not exported, Could be empty or a problem with octoparse. Considered empty for now")  
-        second_extract_df = pd.DataFrame([]) 
+        second_extract_df = pd.DataFrame(columns= ["field1","field2","field3"])
 
 
     try:
         third_extract_df = pd.DataFrame(third_extract_non_exported['data']['dataList'])
     except:
         print("thirdextract Not exported, Could be empty or a problem with octoparse. Considered empty for now")  
-        third_extract_df = pd.DataFrame([]) 
-
+        third_extract_df = pd.DataFrame(columns= ["field1","email"])
 
     
     
