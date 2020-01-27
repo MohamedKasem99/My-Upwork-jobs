@@ -7,8 +7,8 @@ if __name__ == "__main__":
 
     creds_file = pd.read_csv("email_creds_for_NFiles.csv")
 
-    sender_email = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values[0]
-    password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0]
+    sender_email = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values[0].strip()
+    password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0].strip()
     receivers = creds_file[creds_file.columns[2]].dropna(axis=0,how='all').values
 
     for Nfile_index, Nfile_df in enumerate(run_api.Nfiles_df_list):

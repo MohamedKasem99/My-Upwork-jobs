@@ -1,0 +1,183 @@
+field,Res,Decesion,amount
+no pay,{},-1,NA
+compensation: Competative Hourly Rate,{},-1,hourly
+compensation: TBD,{},-1,NA
+compensation: Starting at $20.00 per hour based on experience,{'money': '20.00'},20,hour
+compensation: W2 Guaranteed weekly draw/commissions,{'date': ''},-1,commissions
+compensation: TBD,{},-1,NA
+compensation: Dependent on charges,{},-1,NA
+compensation: $12 / hr,{'money': '12'},12,hr
+compensation: TBD-Will Discuss,{},-1,NA
+compensation: 100,{'cardinal': '100'},100,NA
+compensation: Pay per free signup,{},-1, free signup
+"compensation: Competitive, varies with shoot",{},-1,NA
+compensation: $20 an hour cash the day you work,"{'money': '20', 'date': ''}",20,day
+compensation: 130.00 total,{'cardinal': '130.00'},130,NA
+compensation: $20 per hour paid at photo shoot,{'money': '20'},20,hour
+compensation: Commission. Sky is the limit,{},-1,NA
+no pay,{},-1,NA
+compensation: $100 per day plus meals. Minimum 5 days,"{'money': '100', 'date': ''}",100,day
+no pay,{},-1,NA
+compensation: See each individual job position for pay rate,{},-1, pay rate
+compensation: $75 for approximately 3 1/2 hours,"{'money': '75', 'time': ''}",75,hour
+compensation: minimum $625/per hour,{'money': '625/per'},625,hour
+compensation: based on skill level and initial consultation conversation,{},-1,NA
+no pay,{},-1,NA
+compensation: Starting at $20-30/hr; Based on experience,{'money': '20-30/hr'},20,hr
+compensation: $15-$50+/hr - Varies by event & model type,{'money': '15-50+/hr - Varies by'},15,hr
+compensation: $100 per hour session,{'money': '100'},100,hour
+compensation: $50-$100 PER HOUR,{'money': '50-100 PER'},50,hour
+compensation: $1000,{'money': '1000'},1000,NA
+no pay,{},-1,NA
+no pay,{},-1,NA
+"compensation: Yes, to be discussed.",{},-1,NA
+compensation: TBD,{},-1,NA
+no pay,{},-1,NA
+compensation: $200 per shoot,{'money': '200'},200, shoot
+compensation: varies,{},-1,NA
+compensation: $1650.00 Job total for 4 all days,"{'money': '1650.00', 'date': ''}",1650,day
+compensation: Miami Beach,{'gpe': 'Miami Beach'},-1,NA
+compensation: $15/HOUR CASH,{'money': '15'},15,hour
+compensation: $40+,{'money': '40'},40,NA
+compensation: Depending on experience,{},-1,ience
+compensation: $35 per short term assignment,{'money': '35'},35, short term assignment
+compensation: $35 per short term assignment,{'money': '35'},35, short term assignment
+compensation: $0+,{},-1,NA
+compensation: good pay based on experience,{},-1,ience
+compensation: 10 an hour,{'time': ''},-1,hour
+compensation: 80HR,{'cardinal': '80HR'},80,hr
+compensation: Negotiable,{},-1,NA
+compensation: Pay will be discussed based on experience.,{},-1,ience.
+no pay,{},-1,NA
+"compensation: $200 compensation, should only take 2-3 hours","{'money': '200', 'time': ''}",200,hour
+compensation: $20,{'money': '20'},20,NA
+compensation: TBD based on experience,{'org': 'TBD'},-1,ience
+compensation: Paid per job,{},-1, job
+compensation: Minimum Wage at $7.25 per hour,{'money': '7.25'},7,hour
+no pay,{},-1,NA
+compensation: Professional fee rate,{},-1,NA
+"compensation: Professional fee rate, increasing annually",{'date': ''},-1,NA
+compensation: negotiable,{},-1,NA
+compensation: 100,{'cardinal': '100'},100,NA
+compensation: Will discuss,{},-1,NA
+compensation: contract,{},-1,NA
+compensation: $18 per hour,{'money': '18'},18,hour
+compensation: DOE,{},-1,NA
+compensation: commission basis,{},-1,NA
+compensation: $50 gift card to Amazon.com,"{'money': '50', 'org': 'Amazon.com'}",50,NA
+compensation: Negotiable stipend for being available plus approx $125/Hr. (negotiable) for all work performed,{},-1,hr
+compensation: 100-200$ daily,{'money': '100-200'},100,daily
+compensation: weekly pay,{'date': ''},-1,NA
+compensation: $10/hr,{'money': '10'},10,hr
+compensation: negotiable,{},-1,NA
+no pay,{},-1,NA
+no pay,{},-1,NA
+compensation: $15-$40,{'money': '15-40'},15,NA
+"compensation: $1,000 - $2,500","{'money': '1,000 - 2,500'}",1000,NA
+"compensation: Deferred pay (no pay upfront), but all transportation & food covered",{},-1,NA
+"compensation: Open to discussion, definitely a paid position.",{},-1,paid position.
+compensation: Depends upon experience,{},-1,ience
+compensation: $25/hr for booked sessions,{},-1,hr
+compensation: TBD,{},-1,NA
+compensation: Possible pay per video by request,{},-1, video by request
+compensation: $50,{'money': '50'},50,NA
+compensation: TBD,{},-1,NA
+compensation: $400,{'money': '400'},400,NA
+no pay,{},-1,NA
+compensation: 9.00 per hour,{'cardinal': '9.00'},9,hour
+compensation: $100/hr,{'money': '100'},100,hr
+compensation: Cash Pay: $300,{'money': '300'},300,NA
+compensation: Free tattoo cover up by famour tattoo artist + additional $$ compensation,{'person': 'famour'},-1,NA
+"compensation: $30 per vlog (shoot, edit and post) aprox 3 hours of work each -- 1-3 per weeks (possibly shot on the same day each time)","{'money': '30', 'time': '', 'cardinal': '', 'date': ''}",30,day
+compensation: Pay varies by project,{},-1,NA
+compensation: Open,{},-1,NA
+compensation: split $,{},-1,NA
+no pay,{},-1,NA
+compensation: TBD,{},-1,NA
+compensation: $225,{'money': '225'},225,NA
+no pay,{},-1,NA
+compensation: $100 for 90 min shoot,"{'money': '100', 'time': ''}",100, 90 min shoot
+compensation: Minimum of $100,{'money': '100'},100,NA
+compensation: Please be prepared to propose hourly rates,{'time': ''},-1,hourly
+compensation: 60 per hr,{'cardinal': '60'},60,hr
+compensation: The girls chosen for the shoot will be compensated at competitive rates. $850 for a day's shoot.,"{'money': '850', 'date': ''}",850,day
+compensation: Bonus based on success,{},-1,NA
+compensation: $500 cash,{'money': '500'},500,NA
+compensation: per job,{},-1, job
+no pay,{},-1,NA
+compensation: $50 per article,{'money': '50'},50, article
+compensation: Artist compensation available. Submit for more details,{},-1, more details
+no pay,{},-1,NA
+compensation: $125 for 2 hour shoot,"{'money': '125', 'time': ''}",125,hour
+compensation: $15/ hr + depending on skill and experience,{'person': '15/'},-1,hr
+no pay,{},-1,NA
+compensation: 25$ -Hr (if chosen for main role),{'money': '25 -Hr'},25,hr
+"compensation: Please email me with your quote. Payment by cash, check, or credit card.",{},-1,NA
+"compensation: $200 compensation, should only take 2-3 hours","{'money': '200', 'time': ''}",200,hour
+no pay,{},-1,NA
+compensation: TBD,{},-1,NA
+no pay,{},-1,NA
+compensation: $100/hour,{'money': '100/hour'},100,hour
+compensation: let's talk.,{},-1,NA
+compensation: $40 an hour with a minimum of at least two hours of work.,"{'money': '40', 'time': ''}",40,hour
+no pay,{},-1,NA
+compensation: Pay is dependant on size of social network,{},-1,NA
+compensation: Compensation depends on size of social media network,{},-1,NA
+no pay,{},-1,NA
+"compensation: Pay is $200 for the day, kit and supplies included in pay. Independent contractor.","{'money': '200', 'date': ''}",200,day
+"compensation: Model jobs pay up to $150 per hour, but we are an employment agency. THIS IS NOT FOR A SPECIFIC JOB.",{'money': 'up to 150'},150,hour
+compensation: The gig will be compensated at competitive rates. $850 for a day's shoot.,"{'money': '850', 'date': ''}",850,day
+compensation: $500/day,{'money': '500'},500,day
+compensation: $25-30/hr,{'money': '25'},25,hr
+compensation: DOE,{},-1,NA
+compensation: 500,{'cardinal': '500'},500,NA
+compensation: Negotiable,{},-1,NA
+compensation: $25 for each card  then % per swipe.,{'money': '25'},25, each card  then % per swipe.
+compensation: $400 for 4 hours ($100 per hour),"{'money': '400, 100', 'time': ''}",100,hour
+compensation: $20,{'money': '20'},20,NA
+"compensation: $1,200-$1,500","{'money': '1,200-1,500'}",1200,NA
+compensation: 75,{'cardinal': '75'},75,NA
+compensation: $600 - $1200 weekly,"{'money': '600 - 1200', 'date': ''}",600,NA
+compensation: $50-$400 + commission,{'money': '50-400 + commission'},50,NA
+compensation: I suspect this is easy but I value your time and expertise. please suggest a rate,{},-1,rate
+compensation: $50 for a single 2-3 hour gig for starters,"{'money': '50', 'time': ''}",50,hour
+compensation: 200,{'cardinal': '200'},200,NA
+compensation: $15,{'money': '15'},15,NA
+compensation: 100,{'cardinal': '100'},100,NA
+compensation: 20.00-30.00 per hour depending on experience,{'cardinal': '20.00'},20,hour
+compensation: $1500,{'money': '1500'},1500,NA
+compensation: Please send your rates,{},-1,NA
+compensation: Negotiable,{},-1,NA
+compensation: TBD Flat Rate,{},-1,NA
+compensation: 100$per hour,{'time': ''},-1,hour
+compensation: 750,{'cardinal': '750'},750,NA
+compensation: 500,{'cardinal': '500'},500,NA
+compensation: $10/hr,{'money': '10'},10,hr
+"compensation: Union, National Commercials pay $672 per day plus residuals","{'org': 'Union, National Commercials', 'money': '672'}",672,day
+compensation: to be discussed,{},-1,NA
+compensation: DOE,{},-1,NA
+compensation: $15 per hour of work,{'money': '15'},15,hour
+compensation: $25 HOURLY,{'money': '25'},25,hourly
+compensation: $15 per hour,{'money': '15'},15,hour
+no pay,{},-1,NA
+compensation: 5 dollars,{'money': '5 dollars'},5,NA
+compensation: to be discussed,{},-1,NA
+no pay,{},-1,NA
+compensation: $25/hr,{'money': '25'},25,hr
+compensation: $100,{'money': '100'},100,NA
+compensation: $300,{'money': '300'},300,NA
+compensation: $25 hour,{'money': '25 hour'},25,hour
+compensation: Participants will be compensated for full participation (up to $150),{'money': 'up to 150'},150, full participation (up to $150)
+compensation: %of Fee Charge + Possible Equity Position,{'org': '%of Fee Charge + Possible Equity Position'},-1,NA
+compensation: % of Fee Charge + Possible Equity Position,{'org': '% of Fee Charge + Possible Equity Position'},-1,NA
+compensation: $25 per hour,{'money': '25'},25,hour
+compensation: $11 an hour plus commission,{'money': '11'},11,hour
+compensation: To be agreed,{},-1,NA
+compensation: Receive $100 - $500 per video,{'money': '100 - 500'},100, video
+compensation: Stipend,{},-1,NA
+compensation: Pay rate starts at $20 per article/press release.,{'money': '20'},20,press release.
+compensation: $75/hour,{'money': '75/hour'},75,hour
+compensation: TBD,{},-1,NA
+compensation: 50,{'cardinal': '50'},50,NA
+compensation: $50 for 2 hours,"{'money': '50', 'time': ''}",50,hour
+compensation: $100,{'money': '100'},100,NA

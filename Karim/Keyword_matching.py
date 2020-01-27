@@ -21,30 +21,42 @@ payments = pd.read_excel(xls, 'payments').dropna(axis=1, how='all').dropna(axis=
 contract = pd.read_excel(xls, 'contract').dropna(axis=1, how='all').dropna(axis=0, how='all')
 
 
-first_extract =  run_api.first_extract_df
-second_extract = run_api.second_extract_df
-third_extract = run_api.third_extract_df
-
 utils.pre_process_df_keywords(parent_second)
 utils.pre_process_df_keywords(first)
 utils.pre_process_df_keywords(bad_keywords)
 
+
+Nfiles_df_list, first_extract, second_extract, third_extract = run_api.Nfiles_df_list, run_api.first_extract_df, run_api.second_extract_df, run_api.third_extract_df
 extracted_pay = utils.extract_pay_info(second_extract,extractor)
-second_extract = run_api.cleanup_df(second_extract.merge(third_extract, on= "field1", how="left" ), "field1")
-second_extract_pay_appended = second_extract.reset_index().merge(extracted_pay.reset_index(), on="index",how="right").drop(["index","field","Res"],axis=1)
-second_extract_pay_appended.rename(columns={"field1": "title", "field2":"body", "field3": "compensation","email": "email", "Decesion":"pay_amount"}, inplace=True)
+
 first_extract.rename(inplace=True, columns={"field1_Text_Text": "title", "field1_Link_Link": "link"})
-all_info = run_api.cleanup_df(second_extract_pay_appended.merge(first_extract, on= "title", how="left" ), "title")
+first_extract = run_api.cleanup_df(first_extract,"title")
+second_extract = run_api.cleanup_df(second_extract,"field1")
+third_extract = run_api.cleanup_df(third_extract,"email")
 
-all_info = utils.compare_against_sent(pd.read_csv("sent.csv"), all_info, ["title", "body", "compensation"])
 
-test_array = range(5)
+second_extract_pay_appended = second_extract.reset_index().merge(extracted_pay.reset_index(), on="index",how="left").drop(["index","field","Res"],axis=1)
+all_info = second_extract_pay_appended.merge(third_extract, on= "field1", how="left").dropna().drop_duplicates(subset = "email")
+all_info.rename(columns={"field1": "title", "field2":"body", "field3": "compensation","email": "email", "Decesion":"pay_amount"}, inplace=True)
+
+all_info.to_csv("sent.csv", index= False)
+
+#all_info = utils.compare_against_sent(pd.read_csv("sent.csv"), all_info, ["title", "body", "compensation"])
+
+test_array = range(1)
 if len(all_info) != 0:
 
     for title, body, pay_amount, rate, cl_email in  zip(all_info["title"].iloc[test_array], all_info["body"].iloc[test_array], 
                                                         all_info["pay_amount"].iloc[test_array], all_info["amount"].iloc[test_array], all_info["email"].iloc[test_array]):
         
-        raw_job_post = title + "\n\n" + body
+        raw_job_post = "I need a graphic design" + "\n\n" + """QR Code Link to This Post
+I'm looking for a graphic designer who can alter some of my photos and add text
+on them to look like a magazine cover or an add.
+Someone who can write in different languages (Russian preferred) would be great.
+Please send me your work to look at.
+I will pay $15- $40 per picture, depends on how much text. I need about 6 pictures.
+
+"""     
         generated_email = ""
         
         raw_job_post = raw_job_post.replace("QR Code Link to This Post", "").lower()
@@ -156,5 +168,5 @@ if len(all_info) != 0:
 else:
     print("NO NEW INFORMATION WAS EXTRACTED")
 
-all_info = run_api.append_non_exported("sent.csv", all_info).dropna().drop_duplicates()
-all_info.to_csv("sent.csv", index=False)
+#all_info = run_api.append_non_exported("sent.csv", all_info).dropna().drop_duplicates()
+#all_info.to_csv("sent.csv", index=False)

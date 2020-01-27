@@ -84,8 +84,7 @@ def start_all_tasks(client, ID_dict):
         start_task_by_ID( ID )
     
 
-def clear_all_data(client, NFile_also=True):
-    ID_dict = get_task_IDs(client)
+def clear_all_data(ID_dict, NFile_also=True):
     for ID in ID_dict["extracts_IDs"]:
         print(client.clear_data( ID ))
     if NFile_also:
@@ -164,7 +163,7 @@ user_name = creds_file[creds_file.columns[0]].dropna(axis=0,how='all').values[0]
 password = creds_file[creds_file.columns[1]].dropna(axis=0,how='all').values[0]
 
 base_url = 'http://advancedapi.octoparse.com/'
-token_entity = log_in(base_url, user_name, password)
+token_entity = log_in(base_url, user_name.strip(), password.strip())
 
 ID_dict = get_task_IDs(client)
 
@@ -176,4 +175,3 @@ first_extract_df.to_csv("firstextract.csv", index = False)
 second_extract_df.to_csv("secondextract.csv", index = False)
 third_extract_df.to_csv("thirdextract.csv", index = False)
 [Nfile.to_csv(f"NFile{num+1}.csv",index=False) for num, Nfile in enumerate(Nfiles_df_list) ]
-

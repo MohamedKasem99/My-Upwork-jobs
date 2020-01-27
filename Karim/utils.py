@@ -130,8 +130,16 @@ def extract_pay_info(second_extract, extractor):
               "Decesion": [" "] * len(second_extract['field3'].values)
              })
     for indx, item in enumerate(extracted_pay["Res"]):
+        if "time" in  item.keys():
+            item["time"] = ""
+        if "date" in  item.keys():
+            item["date"] = ""
+            
+        if "money" in item.keys() and "cardinal" in item.keys():
+            item["cardinal"] = ""
+            
         if len(item) != '' and ("money" in item.keys() or 'cardinal' in item.keys()):
-            temp = re.findall(r'\d+', str(item.values()).replace(',',""))
+            temp = re.findall(r'\d+', str(item.values()).replace(',',"").replace(".00",""))
             try:
                 extracted_pay.iloc[indx]['Decesion'] = min(list(map(int, temp)))
             except:
@@ -156,9 +164,10 @@ def extract_pay_info(second_extract, extractor):
     return extracted_pay
 
 
-def compare_against_sent(df1, df2, columns_to_check):
+def compare_against_sent(df1, df2, columns):
     """
-    columns_to_check: is an array of names of columns to check with.
+    until: -1 for all except last one cols 
+    -2 for all except last two cols
     """
-    index  = df1[(df1[columns_to_check].isin(df2[columns_to_check]) == True)].dropna(how='all').index
+    index  = df1[(df1[columns].isin(df2[columns]) == True)].dropna(how='all').index
     return df1.drop(index)

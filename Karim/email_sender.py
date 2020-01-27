@@ -21,4 +21,4 @@ def send_mail(subject, body, from_, password, receiver):
             message['From'] = from_
             message['Subject'] = subject
             message.attach(MIMEText(body, 'plain'))
-            server.sendmail(from_, receiver, message.as_string())
+            server.sendmail(from_, receiver.strip(), message.as_string())
