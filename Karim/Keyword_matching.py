@@ -1,6 +1,7 @@
 import utils
 import time
 import re
+import os
 import NFile_script
 from ner import NER
 from email_sender import send_mail
@@ -71,6 +72,13 @@ if len(all_info) != 0:
         pay_method = utils.find_matching_key_word(job_post,payments)
         contract_type = utils.find_matching_key_word(job_post,contract)
 
+        samples=[]
+        for file_name in parent_second_result:
+            path = f"samples/{file_name}.txt"
+            if os.path.isfile(path):
+                with open(path,"r") as file:
+                    sample = file.read().strip()
+                samples.append({file_name: sample})
 
         formatted_first = ""
         formatted_second_parent = ""
@@ -79,8 +87,8 @@ if len(all_info) != 0:
         formatted_pay_method = ""
         formatted_contract_type = ""
         formatted_sample = ""
-
-        is_sample = False
+        
+        is_sample = any(samples)
         is_tutor = any(tutoring_result)
         is_payment_method = any(pay_method)
         is_contract_type = any(contract_type)
@@ -121,7 +129,12 @@ if len(all_info) != 0:
             formatted_tutoring = """As I understood, you are seeking someone to teach you how to do things instead of providing you with the services. What I generally do for my clients would be that I would ask you to provide me details regarding a specific project you have in mind, and I would self-record myself doing it. This will enable you to skip the learning of basics and ancillary things and learn exactly what you want. You will have the video showing every movements and actions being made from scratch to the result. I will also provide you, if needed, the resulting work."""
 
         if is_sample:
-            formatted_sample = """Feel free to have a look at my samples:
+            string = """"""
+            for i in samples:
+                string = string + (str(i)) + "\n"
+            string = string.replace("{","").replace("}","").replace("'","")
+            formatted_sample = f"""Feel free to have a look at my samples:
+                {string}
             """
 
         if is_payment_method:
