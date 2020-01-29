@@ -169,5 +169,9 @@ def compare_against_sent(df1, df2, columns):
     until: -1 for all except last one cols 
     -2 for all except last two cols
     """
-    index  = df1[(df1[columns].isin(df2[columns]) == True)].dropna(how='all').index
-    return df1.drop(index)
+    ind_to_drop = []
+    for indx1 in range(len(df1)):
+        for indx2 in range(len(df2)):
+            if all(df1[columns].iloc[indx1].values == df2[columns].iloc[indx2].values):
+                ind_to_drop.append(indx1)
+    return df1.drop(ind_to_drop).reset_index(drop=True)

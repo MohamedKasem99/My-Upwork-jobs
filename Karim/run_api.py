@@ -37,7 +37,7 @@ def log_in(base_url, username, password):
 
 def append_non_exported(file_name, df_non_exported):
     df_exported = pd.read_csv(file_name)
-    return df_exported.append(df_non_exported, ignore_index = True, sort= False).dropna()
+    return df_exported.append(df_non_exported, ignore_index = True, sort= False).drop_duplicates().dropna()
 
 
 def cleanup_df(df, subset):
@@ -119,10 +119,7 @@ def export_all_tasks_dfs(ID_dict, return_dict = False):
         Nfiles_df_list = [pd.DataFrame(Nfile['data']['dataList']).drop_duplicates() for Nfile in Nfiles_non_exported]
     except:
         print("NFiles Not exported, Could be empty or a problem with octoparse. Considered empty for now")     
-        Nfiles_df_list = [pd.DataFrame([{
-            "field1_Text_Text":[],
-            "field1_Link_Link":[]
-        }])]
+        Nfiles_df_list = [pd.DataFrame(columns= ["field1_Text_Text","field1_Link_Link"])]
 
 
     try:
