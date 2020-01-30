@@ -39,14 +39,27 @@ third_extract = run_api.cleanup_df(third_extract,"email")
 second_extract_pay_appended = second_extract.reset_index().merge(extracted_pay.reset_index(), on="index",how="left").drop(["index","field","Res"],axis=1)
 all_info = second_extract_pay_appended.merge(third_extract, on= "field1", how="left").dropna().drop_duplicates(subset = "email")
 all_info.rename(columns={"field1": "title", "field2":"body", "field3": "compensation","email": "email", "Decesion":"pay_amount"}, inplace=True)
-
-all_info = utils.compare_against_sent( all_info, pd.read_csv("sent.csv"), ["title", "body", "compensation"])
-
+all_info.drop_duplicates(inplace=True)
+print(all_info)
+#all_info = utils.compare_against_sent( all_info, pd.read_csv("sent.csv"), ["title", "body", "compensation"])
+try:
+    sent = pd.read_csv("sent.csv")
+except:
+    sent = pd.DataFrame(columns = ["gig"])
+    sent.to_csv("sent.csv", index = False)
 if len(all_info) != 0:
 
     for title, body, pay_amount, rate, cl_email in  zip(all_info["title"], all_info["body"], all_info["pay_amount"], all_info["amount"], all_info["email"]):
         
         raw_job_post = title + "\n\n" + body
+
+        if raw_job_post.strip() in sent.values:
+            print("Breaking because already sent")
+            continue
+        else:
+            sent = pd.DataFrame(sent["gig"].append(pd.Series(raw_job_post.strip()), ignore_index=True), columns = ["gig"])
+            sent.to_csv("sent.csv", index=False)
+
         generated_email = ""
         
         raw_job_post = raw_job_post.replace("QR Code Link to This Post", "").lower()
@@ -132,9 +145,8 @@ if len(all_info) != 0:
             formatted_tutoring = """As I understood, you are seeking someone to teach you how to do things instead of providing you with the services. What I generally do for my clients would be that I would ask you to provide me details regarding a specific project you have in mind, and I would self-record myself doing it. This will enable you to skip the learning of basics and ancillary things and learn exactly what you want. You will have the video showing every movements and actions being made from scratch to the result. I will also provide you, if needed, the resulting work."""
 
         if is_sample:
-            string = """"""
             for i in samples:
-                string += i
+                formatted_sample += i
         else:
             print("Breaking because no samples are found")
             continue
@@ -169,11 +181,10 @@ if len(all_info) != 0:
     karimafilal@hotmail.com
     (408) 393-4260 """
 
-        send_mail(formatted_subject, generated_email, "firstenaction@gmail.com", "CastirlaCorte56", "karimafilal@hotmail.com")
+        send_mail(formatted_subject, generated_email, "firstenaction@gmail.com", "CastirlaCorte56", "s-mohamed.kasem@zewailcity.edu.eg")
         print(generated_email)
+
 else:
     print("NO NEW INFORMATION WAS EXTRACTED")
 
-all_info = run_api.append_non_exported("sent.csv", all_info).dropna().drop_duplicates()
-all_info.to_csv("sent.csv", index=False)
 

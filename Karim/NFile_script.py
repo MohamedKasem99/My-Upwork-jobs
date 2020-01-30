@@ -1,6 +1,6 @@
 import run_api
 from email_sender import send_mail
-
+from utils import compare_against_sent
 pd = run_api.pd
 
 if __name__ == "__main__": 
@@ -13,10 +13,29 @@ if __name__ == "__main__":
 
     for Nfile_index, Nfile_df in enumerate(run_api.Nfiles_df_list):
         try:
-            for row in Nfile_df.itertuples():
-                body = """Title: {}\nLink: {}""".format(row.field1_Text_Text, row.field1_Link_Link)
+            file_name = f"sent_Nfile{Nfile_index+1}.csv"
+
+            try:
+                Nfiles_sent = pd.read_csv(file_name)
+
+            except: 
+                Nfiles_sent = pd.DataFrame(columns = ["text&link"])
+                Nfiles_sent.to_csv(file_name, index = False)
+
+
+            for text, link in zip(Nfile_df["field1_Text_Text"], Nfile_df["field1_Link_Link"]):
+
+                if text + link  in Nfiles_sent.values:
+                    print("Breaking because already sent")
+                    continue
+                else: 
+                    Nfiles_sent = pd.DataFrame(Nfiles_sent['text&link'].append(pd.Series(text+link), ignore_index=True), columns = ["text&link"])
+                    Nfiles_sent.to_csv(file_name, index=False)
+
+                body = """Title: {}\nLink: {}""".format(text, link)
                 for receiver in receivers:
                     send_mail("Iron glove and fletcher",body , sender_email, password, receiver)
+            
         except:
             print(f"couldn't send Nfile{Nfile_index+1}")
             raise 
