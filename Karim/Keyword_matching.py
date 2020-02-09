@@ -40,8 +40,9 @@ second_extract_pay_appended = second_extract.reset_index().merge(extracted_pay.r
 all_info = second_extract_pay_appended.merge(third_extract, on= "field1", how="left").dropna().drop_duplicates(subset = "email")
 all_info.rename(columns={"field1": "title", "field2":"body", "field3": "compensation","email": "email", "Decesion":"pay_amount"}, inplace=True)
 all_info.drop_duplicates(inplace=True)
-print(all_info)
-#all_info = utils.compare_against_sent( all_info, pd.read_csv("sent.csv"), ["title", "body", "compensation"])
+
+all_info = all_info.merge(first_extract, on= "title", how="left").dropna().drop_duplicates(subset = "title")
+
 try:
     sent = pd.read_csv("sent.csv")
 except:
@@ -49,7 +50,7 @@ except:
     sent.to_csv("sent.csv", index = False)
 if len(all_info) != 0:
 
-    for title, body, pay_amount, rate, cl_email in  zip(all_info["title"], all_info["body"], all_info["pay_amount"], all_info["amount"], all_info["email"]):
+    for title, body, pay_amount, rate, cl_email, link in  zip(all_info["title"], all_info["body"], all_info["pay_amount"], all_info["amount"], all_info["email"], all_info["link"]):
         
         raw_job_post = title + "\n\n" + body
 
@@ -136,8 +137,8 @@ if len(all_info) != 0:
         cond_1 = f"I see that you are looking for {formatted_first} {formatted_second_parent_final}"
 
         if pay_amount > 0:
-            formatted_pay = f""" Hence, I am willing to offer you this service for ${pay_amount*0.8} instead of ${pay_amount}"""
-            formatted_subject = f"""${pay_amount*0.8} instead of ${pay_amount} {title}"""
+            formatted_pay = f""" Hence, I am willing to offer you this service for ${int(pay_amount*0.8)} instead of ${pay_amount}"""
+            formatted_subject = f"""${int(pay_amount*0.8)} instead of ${pay_amount} {title}"""
         else:
             formatted_pay = """In this instance and rather than providing you with a quote as I assume you are on a budget, I would prefer to ask you how much are you expecting to pay for this service? if it is reasonable, I would gladly offer you my services. """
             formatted_subject = title
@@ -147,9 +148,9 @@ if len(all_info) != 0:
         if is_sample:
             for i in samples:
                 formatted_sample += i
-        else:
-            print("Breaking because no samples are found")
-            continue
+        # else:
+        #     print("Breaking because no samples are found")
+        #     continue
 
         if is_payment_method:
             formatted_pay_method = f"""I am fine to accept payments with {pay_method[0]} as you have mentioned it within your posting.
@@ -164,7 +165,10 @@ if len(all_info) != 0:
             """
 
         generated_email = f"""
-    {cl_email}
+    client_email: {cl_email}
+
+    web_link: {link}
+
     Greetings,
     {cond_1}
 
@@ -181,7 +185,7 @@ if len(all_info) != 0:
     karimafilal@hotmail.com
     (408) 393-4260 """
 
-        send_mail(formatted_subject, generated_email, "firstenaction@gmail.com", "CastirlaCorte56", "s-mohamed.kasem@zewailcity.edu.eg")
+        send_mail(formatted_subject, generated_email, "firstenaction@gmail.com", "CastirlaCorte56", "karimafilal@hotmail.com")
         print(generated_email)
 
 else:
