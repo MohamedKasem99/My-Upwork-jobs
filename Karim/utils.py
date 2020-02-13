@@ -7,8 +7,8 @@ import numpy as np
 import nltk
 import itertools
 from nltk.corpus import stopwords
-nltk.download("stopwords")
-nltk.download('punkt')
+# nltk.download("stopwords")
+# nltk.download('punkt')
 
 
 def pre_process_df_keywords(df):
@@ -93,8 +93,8 @@ def find_workers(raw_message, message, first, at_least_another = pd.DataFrame([0
 def step_1(raw_message, message, bad_keywords):
     matched_words = []
     hard_coded = ['class a ', 'class b ', 'class c ']
-    one_words = bad_keywords[bad_keywords['name'].apply(lambda x: not len(x.split())>1)]["name"]
-    two_words = bad_keywords[bad_keywords['name'].apply(lambda x: len(x.split())>1)]["name"]
+    one_words = bad_keywords[bad_keywords[bad_keywords.columns[0]].apply(lambda x: not len(x.split())>1)][bad_keywords.columns[0]]
+    two_words = bad_keywords[bad_keywords[bad_keywords.columns[0]].apply(lambda x: len(x.split())>1)][bad_keywords.columns[0]]
     
     for word in hard_coded: 
         if word in raw_message.lower(): matched_words.append(word)

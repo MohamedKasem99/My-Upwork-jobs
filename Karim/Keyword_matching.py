@@ -2,7 +2,6 @@ import utils
 import time
 import re
 import os
-import NFile_script
 from ner import NER
 from email_sender import send_mail
 
@@ -168,6 +167,9 @@ if len(all_info) != 0:
     client_email: {cl_email}
 
     web_link: {link}
+
+    Body:{body}
+
 
     Greetings,
     {cond_1}

@@ -114,7 +114,6 @@ def export_all_tasks_dfs(ID_dict, return_dict = False):
     first_extract_non_exported = client.export_non_exported_data(extracts_IDs[0], 1000)
     second_extract_non_exported = client.export_non_exported_data(extracts_IDs[1], 1000)
     third_extract_non_exported = client.export_non_exported_data(extracts_IDs[2], 1000)
-
     try:
         Nfiles_df_list = [pd.DataFrame(Nfile['data']['dataList']).drop_duplicates() for Nfile in Nfiles_non_exported]
     except:
@@ -142,14 +141,12 @@ def export_all_tasks_dfs(ID_dict, return_dict = False):
         print("thirdextract Not exported, Could be empty or a problem with octoparse. Considered empty for now")  
         third_extract_df = pd.DataFrame(columns= ["field1","email"])
 
-    
-    
-    return {
-        "Nfiles_df": Nfiles_df_list,
-        "first_extract": first_extract_df,
-        "second_extract": second_extract_df,
-        "third_extract": third_extract_df
-    } if return_dict else ( [cleanup_df(Nfile, "field1_Text_Text") for Nfile in Nfiles_df_list], cleanup_df(first_extract_df, "field1_Text_Text"), 
+    try:
+        Nfile_df = [cleanup_df(Nfile, "field1_Text_Text") for Nfile in Nfiles_df_list]
+    except:
+        Nfile_df = Nfiles_df_list
+
+    return (Nfile_df , cleanup_df(first_extract_df, "field1_Text_Text"), 
                            cleanup_df(second_extract_df, "field1")  , cleanup_df(third_extract_df, "field1") )
 
 
@@ -167,7 +164,7 @@ token_entity = log_in(base_url, user_name.strip(), password.strip())
 ID_dict = get_task_IDs(client)
 
 start_all_tasks(client, ID_dict)
-
+print(ID_dict)
 Nfiles_df_list, first_extract_df, second_extract_df, third_extract_df = export_all_tasks_dfs(ID_dict)
 
 first_extract_df.to_csv("firstextract.csv", index = False)
